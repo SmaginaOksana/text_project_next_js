@@ -1,9 +1,15 @@
 import { notFound } from "next/navigation";
 
-import { FetchSettings, FetchStatus, UserData } from "@/interfaces";
+import {
+  FetchSettings,
+  FetchStatus,
+  UserData,
+  FetchResponseAllUsers,
+  FetchResponseUser,
+} from "@/interfaces";
 
 export default function useHttp() {
-  const request = async ({ url, params }: FetchSettings) => {
+  const request = async <T>({ url, params }: FetchSettings): Promise<T> => {
     try {
       const response = await fetch(url, params);
 
@@ -20,15 +26,15 @@ export default function useHttp() {
     }
   };
 
-  const getAllUsers = async () => {
-    const usersData: UserData[] = await request({
+  const getAllUsers = async (): Promise<FetchResponseAllUsers> => {
+    const usersData = await request<UserData[] | []>({
       url: "https://jsonplaceholder.typicode.com/users",
     });
     return { usersData: usersData, status: FetchStatus.Success };
   };
 
-  const getUserById = async (id: number) => {
-    const userData: UserData = await request({
+  const getUserById = async (id: number): Promise<FetchResponseUser> => {
+    const userData = await request<UserData>({
       url: `https://jsonplaceholder.typicode.com/users/${id}`,
     });
     return { userData: userData, status: FetchStatus.Success };
