@@ -17,51 +17,54 @@ export default async function UserCard({
 }) {
   const { id } = await params;
 
-  const { getUserById } = useHttp();
-  const { userData, status } = await getUserById(id);
-
-  const description = [
-    userData.email,
-    `${userData.address.zipcode}, ${userData.address.city},
-    ${userData.address.street}`,
-    userData.phone,
-    userData.website,
-    userData.company.name,
-  ];
+  const { getUsers } = useHttp();
+  const { usersData } = await getUsers(id);
 
   type CardProps = React.ComponentProps<typeof Card>;
 
   function CardUser({ className, ...props }: CardProps) {
-    return (
-      <Card className={cn(className)} {...props}>
-        <CardHeader>
-          <CardTitle className="text-center text-4xl">
-            {userData.name}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap justify-around gap-5">
-            <div className="flex gap-2 min-w-md bg-white rounded-xl border py-6 shadow-sm p-5 hover:bg-gray-700/20">
-              <div className="space-y-1">
-                <CardDescription>
-                  {description.map((item, index) => {
-                    return (
-                      <div className="flex gap-5" key={index}>
-                        <span className="h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-                        <p className="text-xl text-muted-foreground">{item}</p>
-                      </div>
-                    );
-                  })}
-                </CardDescription>
+    if (!Array.isArray(usersData)) {
+      const name = usersData.name;
+      const description = [
+        usersData.email,
+        `${usersData.address.zipcode}, ${usersData.address.city},
+        ${usersData.address.street}`,
+        usersData.phone,
+        usersData.website,
+        usersData.company.name,
+      ];
+
+      return (
+        <Card className={cn(className)} {...props}>
+          <CardHeader>
+            <CardTitle className="text-center text-4xl">{name}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap justify-around gap-5">
+              <div className="flex gap-2 min-w-md bg-white rounded-xl border py-6 shadow-sm p-5 hover:bg-gray-700/20">
+                <div className="space-y-1">
+                  <CardDescription>
+                    {description.map((item, index) => {
+                      return (
+                        <div className="flex gap-5" key={index}>
+                          <span className="h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                          <p className="text-xl text-muted-foreground">
+                            {item}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </CardDescription>
+                </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-        <Link href={`/`} className="hover:text-red-700 m-auto">
-          Вернуться на главную страницу
-        </Link>
-      </Card>
-    );
+          </CardContent>
+          <Link href={`/`} className="hover:text-red-700 m-auto">
+            Вернуться на главную страницу
+          </Link>
+        </Card>
+      );
+    }
   }
 
   return (

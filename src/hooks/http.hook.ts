@@ -4,8 +4,7 @@ import {
   FetchSettings,
   FetchStatus,
   UserData,
-  FetchResponseAllUsers,
-  FetchResponseUser,
+  FetchResponse,
 } from "@/interfaces";
 
 export default function useHttp() {
@@ -26,19 +25,19 @@ export default function useHttp() {
     }
   };
 
-  const getAllUsers = async (): Promise<FetchResponseAllUsers> => {
-    const usersData = await request<UserData[] | []>({
-      url: "https://jsonplaceholder.typicode.com/users",
-    });
-    return { usersData: usersData, status: FetchStatus.Success };
+  const getUsers = async (id: number | null = null): Promise<FetchResponse> => {
+    if (id) {
+      const userData = await request<UserData>({
+        url: `https://jsonplaceholder.typicode.com/users/${id}`,
+      });
+      return { usersData: userData, status: FetchStatus.Success };
+    } else {
+      const usersData = await request<UserData[] | []>({
+        url: `https://jsonplaceholder.typicode.com/users/`,
+      });
+      return { usersData: usersData, status: FetchStatus.Success };
+    }
   };
 
-  const getUserById = async (id: number): Promise<FetchResponseUser> => {
-    const userData = await request<UserData>({
-      url: `https://jsonplaceholder.typicode.com/users/${id}`,
-    });
-    return { userData: userData, status: FetchStatus.Success };
-  };
-
-  return { getAllUsers, getUserById };
+  return { getUsers };
 }

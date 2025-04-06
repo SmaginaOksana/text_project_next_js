@@ -11,13 +11,8 @@ type UrlType = string;
 
 type HeadersType = { "Content-Type": "application/json" };
 
-export interface FetchResponseAllUsers {
-  usersData: UserData[] | [];
-  status: FetchStatus;
-}
-
-export interface FetchResponseUser {
-  userData: UserData;
+export interface FetchResponse {
+  usersData: UserData[] | UserData | [];
   status: FetchStatus;
 }
 
